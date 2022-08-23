@@ -1,0 +1,9 @@
+<ion-app>
+	<div *ngIf="(authenticated | async); then Load else NotLoad"></div>
+	<ng-template #Load>
+		<ion-router-outlet></ion-router-outlet>
+	</ng-template>
+	<ng-template #NotLoad>
+		Not authenticated
+	</ng-template>
+</ion-app>

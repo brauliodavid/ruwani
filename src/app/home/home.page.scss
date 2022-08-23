@@ -1,0 +1,39 @@
+.top-calendar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+.top-calendar-box {
+    width: calc(100% / 3);
+    text-align: center;
+    position: relative;
+    padding: 10px;
+}
+
+.top-calendar-day {
+
+}
+
+.top-calendar-date {
+    
+}
+
+.day-name {
+    font-size: 12px;
+}
+
+.active-date {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background-color: #3880ff;
+    left: 46%;
+}
+
+.strike-item {
+    text-decoration: line-through;
+}

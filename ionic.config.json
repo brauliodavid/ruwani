@@ -1,0 +1,7 @@
+{
+  "name": "ruwani",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

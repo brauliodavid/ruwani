@@ -1,0 +1,41 @@
+/* Navigation */
+.main-nav {
+    height: 80px;
+    contain: inherit;
+    background: #fff;
+    box-shadow: none;
+    border: none;
+}
+
+.main-nav ion-tab-button {
+    // color: var(--ion-color-dark);
+    background: none;
+}
+
+.main-nav ion-tab-button.tab-selected {
+    // color: var(--ion-color-secondary);
+}
+
+.btn-add-task {
+    width: 60px;
+    height: 60px;
+    // position: absolute;
+    background: var(--ion-color-primary) !important;
+    border-radius: 20px;
+    bottom: 50px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-add-task ion-icon {
+    color: #fff;
+    font-size: 2rem;
+}
+
+:host {
+    .calendar-day {
+        color: #000 !important;
+    }
+}
