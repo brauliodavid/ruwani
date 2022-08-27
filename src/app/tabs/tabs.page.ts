@@ -1,33 +1,69 @@
-import { Component, ViewChild } from '@angular/core';
-import { IonModal } from '@ionic/angular';
-import { OverlayEventDetail } from '@ionic/core/components';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { switchMap, takeUntil } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable, Subject } from 'rxjs';
+import { FirestoreService } from '../services/firestore.service';
+import { User } from '../interfaces/User';
+import { UserService } from '../services/user.service';
+import { TaskService } from '../services/task.service';
 
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss']
 })
-export class TabsPage {
-	@ViewChild(IonModal) modal: IonModal;
+export class TabsPage implements OnInit, OnDestroy {
+	authenticated: Observable<boolean>
 
-	message = 'This modal example uses triggers to automatically open a modal when the button is clicked.';
-	name: string;
+	activeTab: string = 'home'
 
-	cancel() {
-		this.modal.dismiss(null, 'cancel');
+	private unsubscribe = new Subject<void>()
+
+  	constructor(
+		public auth: AngularFireAuth,
+		private router: Router,
+		private route: ActivatedRoute,
+		private firestoreService: FirestoreService,
+		public userService: UserService,
+		public taskService: TaskService
+	) {}
+
+	ngOnInit(): void {
+		const parts = window.location.href.split('/')
+		const lastSegment = parts.pop() || parts.pop()  // handle potential trailing slash
+		this.activeTab = lastSegment
+
+		this.authenticated = this.auth.authState.pipe(
+			switchMap(async auth => {
+				if (auth != null) {
+					const userDoc = this.firestoreService.firestore().collection('users').doc(auth.uid)
+					const userRef = await userDoc.ref.get()
+					const user = {...userRef.data() as any, id: userRef.id} as User
+					this.userService.userDoc = userDoc
+					this.userService.user = user
+					this.userService.userMock = {
+						uid: user.id,
+						name: user.name,
+						email: user.email
+					}
+					this.router.navigate(['/tabs/home'])
+					console.log('authenticated!')
+					return true
+				}
+				this.router.navigate(['/login'])
+				return false
+			}),
+		)
 	}
 
-	confirm() {
-		this.modal.dismiss(this.name, 'confirm');
+	setOpen(isOpen: boolean) {
+		this.taskService.isTaskOpen.next(isOpen)
 	}
 
-	onWillDismiss(event: Event) {
-		const ev = event as CustomEvent<OverlayEventDetail<string>>;
-		if (ev.detail.role === 'confirm') {
-			this.message = `Hello, ${ev.detail.data}!`;
-		}
+	ngOnDestroy(): void {
+		this.unsubscribe.next()
+		this.unsubscribe.complete()
 	}
-
-  	constructor() {}
 
 }

@@ -39,3 +39,11 @@
         color: #000 !important;
     }
 }
+
+ion-checkbox::part label {
+    display: none !important;
+}
+
+.safearea-ios {
+    margin-top: var(--ion-safe-area-top);
+}

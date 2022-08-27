@@ -1,0 +1,101 @@
+<ion-modal [isOpen]="taskService.isTaskOpen | async" (willDismiss)="onWillDismiss($event)">
+	<ng-template>
+		<ion-header collapse="condense" class="safearea-ios">
+			<ion-toolbar class="header-ios">
+				<ion-title size="large">Add Task</ion-title>
+				<ion-buttons slot="end">
+					<ion-button color="dark" (click)="cancel()">
+						<ion-icon name="close-outline"></ion-icon>
+					</ion-button>
+				</ion-buttons>
+			</ion-toolbar>
+		</ion-header>
+		<ion-content *ngIf="loaded" [formGroup]="addTaskForm" class="ion-padding">
+			<div *ngIf="inputType === 'form'">
+				<ion-item lines="none">
+					<ion-input type="text" formControlName="title" placeholder="Title" class="add-task-title"></ion-input>
+				</ion-item>
+				<ion-item lines="none">
+					<ion-input type="text" formControlName="details" placeholder="Details" class="add-task-details"></ion-input>
+				</ion-item>
+				<ion-item lines="none">
+					<ion-chip class="item-overview" (click)="setDateOpen(true)">
+						<ion-icon name="calendar-outline" color="dark"></ion-icon>
+						<ion-label>{{getSelectedDate()}}</ion-label>
+					</ion-chip>
+					<ion-chip class="item-overview" (click)="setTimeOpen(true)">
+						<ion-icon name="time-outline" color="dark"></ion-icon>
+						<ion-label>{{getSelectedTime()}}</ion-label>
+					</ion-chip>
+				</ion-item>
+				<!-- <ion-item lines="none">
+					<ion-chip class="item-overview">
+						<ion-icon name="repeat-outline" color="dark"></ion-icon>
+						<ion-label>Repeats every 1 day</ion-label>
+					</ion-chip>
+				</ion-item> -->
+	
+				<!-- <div class="add-task-options">
+					<div class="add-task-option">
+						<ion-icon name="calendar-clear-outline"></ion-icon>
+						<ion-text color="medium" class="add-task-option-label" button="true" id="open-date-input"><span>Set date</span></ion-text>
+					</div>
+					<div class="add-task-option">
+						<ion-icon name="flag-outline"></ion-icon>
+						<ion-text color="medium" class="add-task-option-label"><span>Priority</span></ion-text>
+					</div>
+					<div class="add-task-option">
+						<ion-icon name="return-down-back-outline"></ion-icon>
+						<ion-text color="medium" class="add-task-option-label"><span>Repeat</span></ion-text>
+					</div>
+				</div> -->
+			</div>
+			<div *ngIf="inputType === 'mic'">
+				<ion-fab vertical="center" horizontal="center" slot="fixed" (click)="startRecording()">
+					<ion-fab-button [ngClass]="{'rec': activeRecording}" color="danger">
+					  	<ion-icon name="mic-outline"></ion-icon>
+					</ion-fab-button>
+				</ion-fab>
+				<div class="mic-details-box">
+					<div class="mic-details">
+						<ion-text *ngIf="!transcription && !processing">{{activeRecording ? 'speak...' : 'press to record'}}</ion-text>
+						<ion-text *ngIf="processing">processing...</ion-text>
+						<ion-text *ngIf="transcription">{{transcription}}</ion-text>
+					</div>
+				</div>
+			</div>
+		</ion-content>
+		<ion-footer>
+			<ion-toolbar class="add-task-footer-toolbar">
+				<ion-buttons slot="secondary">
+					<ion-button color="dark" (click)="setInputType('form')">
+						<ion-icon name="reader-outline"></ion-icon>
+						<span *ngIf="inputType === 'form'" class="active-input"></span>
+					</ion-button>
+					<ion-button color="dark" (click)="setInputType('mic')">
+						<ion-icon name="mic-outline"></ion-icon>
+						<span *ngIf="inputType === 'mic'" class="active-input"></span>
+					</ion-button>
+				</ion-buttons>
+				<ion-buttons slot="primary">
+					<ion-button color="primary">
+						<ion-label size="large" (click)="saveTask()">Save</ion-label>
+					</ion-button>
+				</ion-buttons>
+
+				<ion-datetime-button datetime="date" [style.display]="'none'"></ion-datetime-button>
+				<ion-modal [isOpen]="isDateOpen" [keepContentsMounted]="true" trigger="open-date-input" (willDismiss)="setDateOpen(false)">
+					<ng-template>
+						<ion-datetime #datepicker [(ngModel)]="date" id="date" presentation="date" show-default-buttons="true"></ion-datetime>
+					</ng-template>
+				</ion-modal>
+				<ion-datetime-button datetime="time" [style.display]="'none'"></ion-datetime-button>
+				<ion-modal [isOpen]="isTimeOpen" [keepContentsMounted]="true" trigger="open-time-input" (willDismiss)="setTimeOpen(false)">
+					<ng-template>
+						<ion-datetime #timepicker [(ngModel)]="time" id="time" presentation="time" show-default-buttons="true" (ionChange)="timeChanged($event)"></ion-datetime>
+					</ng-template>
+				</ion-modal>
+			</ion-toolbar>
+		</ion-footer>
+	</ng-template>
+</ion-modal>
