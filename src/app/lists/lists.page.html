@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
 	<ion-toolbar>
 		<ion-title>
-			Lists
+			{{title}}
 		</ion-title>
 	</ion-toolbar>
 </ion-header>
@@ -9,36 +9,51 @@
 <ion-content [fullscreen]="true">
 	<ion-header collapse="condense">
 		<ion-toolbar>
-			<ion-title size="large">Lists</ion-title>
+			<ion-title size="large">{{title}}</ion-title>
 		</ion-toolbar>
 	</ion-header>
 
 	<ion-fab vertical="top" horizontal="end" slot="fixed"> 
-		<ion-fab-button id="open-modal" color="dark">
+		<ion-fab-button (click)="isAddOpen = true" color="dark">
 		  	<ion-icon name="add"></ion-icon>
 		</ion-fab-button>
 	</ion-fab>
 
-	<ion-card *ngFor="let list of lists" (click)="setOpen(true, list)">
+	<ion-card *ngFor="let list of lists" (click)="setOpen(true, list)" [color]="list.type === 'plans' ? 'light-blue' : ''">
 		<ion-card-header>
-		  	<ion-card-subtitle>0 tasks</ion-card-subtitle>
+		  	<ion-card-subtitle *ngIf="list.type === 'lists'">{{(list.completed | async)?.total}} tasks</ion-card-subtitle>
+			<ion-card-subtitle *ngIf="list.type === 'plans'">
+				<ion-chip *ngFor="let label of list.labels" color="dark">{{label}}</ion-chip>
+			</ion-card-subtitle>
 		  	<ion-card-title>{{list.name}}</ion-card-title>
-			  
 		</ion-card-header>
 	  
-		<ion-card-content>
-			<ion-item lines="none">
-				<ion-button color="light" slot="end" (click)="$event.stopPropagation(); deleteList(list)"><ion-icon name="trash-outline"></ion-icon></ion-button>
-			</ion-item>
+		<ion-card-content *ngIf="list.type === 'plans'">
+			<div *ngIf="(list.completed | async) as completed">
+				<div class="plan-status">
+					<ion-text color="dark">Progress</ion-text> <span class="percentage-label"><ion-text color="dark">{{completed.percentage}}%</ion-text></span>
+				</div>
+				<ion-progress-bar [value]="completed.value"></ion-progress-bar>
+	
+				<div class="deadline-info">
+					<ion-text color="dark" class="deadline-label">Deadline {{functions.dateFormat(list.deadline, 'MMM DD, YYYY')}}</ion-text>
+					<div class="list-tasks-info">
+						<div><ion-icon name="checkmark-circle-outline"></ion-icon> {{completed.total}} tasks</div>
+						<div class="pending-tasks-info"><ion-icon name="flag-outline"></ion-icon> {{completed.total - completed.done}} pending</div>
+					</div>
+				</div>
+			</div>
 		</ion-card-content>
+
+		<ion-icon name="trash-outline" (click)="$event.stopPropagation(); deleteList(list)" class="delete-list-icon"></ion-icon>
 	</ion-card>
 </ion-content>
 
-<ion-modal trigger="open-modal">
+<ion-modal [isOpen]="isAddOpen"  (willDismiss)="isAddOpen = false">
 	<ng-template>
 		<ion-header collapse="condense">
 			<ion-toolbar class="safearea-ios">
-				<ion-title size="large">Add List</ion-title>
+				<ion-title size="large">Add {{title}}</ion-title>
 				<ion-buttons slot="end">
 					<ion-button color="dark" (click)="close()">
 						<ion-icon name="close-outline"></ion-icon>
@@ -51,17 +66,38 @@
 				<ion-label position="floating">Name</ion-label>
 				<ion-input formControlName="name"></ion-input>
 			</ion-item>
+			<ion-item *ngIf="type === 'plans'">
+				<ion-chip (click)="setDateOpen(true)">
+					<ion-icon name="calendar-outline" color="dark"></ion-icon>
+					<ion-label>{{addListForm.value.deadline ? functions.dateFormat(addListForm.value.deadline, 'MMM DD, YYYY') : 'set deadline'}}</ion-label>
+					<ion-datetime-button datetime="date" [style.display]="'none'"></ion-datetime-button>
+					<ion-modal [isOpen]="isDateOpen" [keepContentsMounted]="true" trigger="open-date-input" (willDismiss)="setDateOpen(false)">
+						<ng-template>
+							<ion-datetime #datepicker formControlName="deadline" id="date" presentation="date" show-default-buttons="true"></ion-datetime>
+						</ng-template>
+					</ion-modal>
+				</ion-chip>
+			</ion-item>
+			<ion-item *ngIf="type === 'plans'">
+				<ion-input #labelInput type="text" placeholder="Type and hit enter" (keypress)="onLabelInput($event, labelInput)">
+					<ion-chip *ngFor="let label of addListForm.value.labels">
+					  	<ion-label>{{label}}</ion-label>
+						<ion-icon name="close-circle" (click)="removeLabel(label)"></ion-icon>
+					</ion-chip>
+				</ion-input>
+			</ion-item>
+			
 			<ion-item lines="none"></ion-item>
 			<ion-button expand="block" (click)="addList()">Save</ion-button>
 		</ion-content>
 	</ng-template>
 </ion-modal>
 
-<ion-modal [isOpen]="isTasksOpen">
+<ion-modal [isOpen]="isTasksOpen" (willDismiss)="onWillDismiss($event)">
     <ng-template>
 		<ion-header collapse="condense">
 			<ion-toolbar class="safearea-ios">
-				<ion-title size="large">{{(currentList | async)?.name}}</ion-title>
+				<ion-title size="large"><ion-input [formControl]="listForm.get('name')" class="list-name-input"></ion-input></ion-title>
 				<ion-buttons slot="end">
 					<ion-button color="dark" (click)="setOpen(false, null)">
 						<ion-icon name="close-outline"></ion-icon>
@@ -70,8 +106,34 @@
 			</ion-toolbar>
 		</ion-header>
 		<ion-content class="ion-padding">
+			<ion-list *ngIf="type === 'plans'">
+				<ion-item>
+					<ion-chip (click)="setDateOpen2(true)">
+						<ion-icon name="calendar-outline" color="dark"></ion-icon>
+						<ion-label>{{listForm.get('deadline').value ? functions.dateFormat(listForm.get('deadline').value, 'MMM DD, YYYY') : 'set deadline'}}</ion-label>
+						<ion-datetime-button datetime="date2" [style.display]="'none'"></ion-datetime-button>
+						<ion-modal [isOpen]="isDateOpen2" [keepContentsMounted]="true" id="date2" trigger="open-date-input" (willDismiss)="setDateOpen2(false)">
+							<ng-template>
+								<ion-datetime #datepicker [formControl]="listForm.get('deadline')" presentation="date" show-default-buttons="true"></ion-datetime>
+							</ng-template>
+						</ion-modal>
+					</ion-chip>
+				</ion-item>
+				<ion-item>
+					<ion-input #labelInput type="text" placeholder="Type and hit enter" (keypress)="onLabelInput2($event, labelInput)">
+						<ion-chip *ngFor="let label of listForm.get('labels').value">
+							  <ion-label>{{label}}</ion-label>
+							<ion-icon name="close-circle" (click)="removeLabel2(label)"></ion-icon>
+						</ion-chip>
+					</ion-input>
+				</ion-item>
+				<ion-item lines="none"></ion-item>
+			</ion-list>
+			
+			<ion-text color="medium">Tasks</ion-text>
 			<tasks [tasks]="tasks" [tasksCollection]="tasksCollection"></tasks>
-			<ion-button expand="block" color="dark" (click)="addTask()">Add Task</ion-button>
+
+			<ion-button expand="block" color="dark" (click)="addTask()" class="add-task-list-btn">Add Task</ion-button>
 		</ion-content>
     </ng-template>
 </ion-modal>

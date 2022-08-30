@@ -47,3 +47,47 @@ ion-checkbox::part label {
 .safearea-ios {
     margin-top: var(--ion-safe-area-top);
 }
+
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.list-name-input input {
+    padding: 0 !important;
+}
+
+ion-modal.image-gallery {
+    --width: fit-content;
+    --min-width: 250px;
+    --height: fit-content;
+    --border-radius: 6px;
+    --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+  
+ion-modal.image-gallery::part(backdrop) {
+    // background: rgba(0, 0, 0);
+    // opacity: 1;
+    --backdrop-opacity: 0.5;
+}
+
+.ion-color-light-blue {
+    --ion-color-base: var(--ion-color-light-blue);
+    --ion-color-base-rgb: var(--ion-color-light-blue-rgb);
+    --ion-color-contrast: var(--ion-color-light-blue-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-light-blue-contrast-rgb);
+    --ion-color-shade: var(--ion-color-light-blue-shade);
+    --ion-color-tint: var(--ion-color-light-blue-tint);
+}
+
+.ion-color-white {
+    --ion-color-base: var(--ion-color-white);
+    --ion-color-base-rgb: var(--ion-color-white-rgb);
+    --ion-color-contrast: var(--ion-color-white-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-white-contrast-rgb);
+    --ion-color-shade: var(--ion-color-white-shade);
+    --ion-color-tint: var(--ion-color-white-tint);
+}

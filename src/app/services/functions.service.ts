@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { AbstractControl, FormArray, FormControl, FormGroup } from "@angular/forms";
-import { isObject } from 'lodash'
+import { isObject, round } from 'lodash'
 import * as _moment from 'moment-timezone'
 const moment = _moment
 
@@ -144,5 +144,9 @@ export class FunctionsService {
         if(isObject(value) && value.hasOwnProperty('_seconds') && value.hasOwnProperty('_nanoseconds')) 
         return true
         return false
+    }
+
+    priceFormat(val){
+        return val || val === 0 ? Number(round(val, 2).toFixed(2)) : 0
     }
 }

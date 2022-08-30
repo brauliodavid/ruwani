@@ -85,6 +85,14 @@
   --ion-color-white-contrast-rgb: 39, 40, 51;
   --ion-color-white-shade: #ffffff;
   --ion-color-white-tint: #ffffff;
+
+  /** light blue **/
+  --ion-color-light-blue: #E6F0FE;
+  --ion-color-light-blue-rgb: 230, 240, 254;
+  --ion-color-light-blue-contrast: #222428;
+  --ion-color-light-blue-contrast-rgb: 34, 36, 40;
+  --ion-color-light-blue-shade: #E6F0FE;
+  --ion-color-light-blue-tint: #E6F0FE;
 }
 
 @media (prefers-color-scheme: dark) {

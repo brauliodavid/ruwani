@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { IonItemSliding } from '@ionic/angular';
 import { Task } from '../../interfaces/Task';
 import { FunctionsService } from '../../services/functions.service';
 import { TaskService } from '../../services/task.service';
@@ -25,13 +26,15 @@ export class TasksComponent implements OnInit {
 		this.tasksCollection.doc(task.id).update({checked: event.detail.checked})
 	}
 
-	editTask(task: Task){
+	editTask(task: Task, taskSliding: IonItemSliding){
 		this.taskService.taskData.next(task)
 		this.taskService.isTaskOpen.next(true)
+		taskSliding.close()
 	}
 
-	deleteTask(task: Task){
+	deleteTask(task: Task, taskSliding: IonItemSliding){
 		this.tasksCollection.doc(task.id).delete()
+		taskSliding.close()
 	}
 
 }

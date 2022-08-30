@@ -1,22 +1,51 @@
-<ion-header>
-  	<ion-toolbar>
-		<ion-title>login 2</ion-title>
-	</ion-toolbar>
-</ion-header>
+<ion-header></ion-header>
 
-<ion-content>
-	<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+<ion-content [fullscreen]="true" color="primary">
+	<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+		<h1 class="logo">Ruwani</h1>
 		<ion-list>
-			<ion-item>
+			<ion-item color="primary">
 				<ion-label position="floating">Email</ion-label>
 				<ion-input formControlName="email"></ion-input>
 			</ion-item>
-			<ion-item>
+			<ion-item color="primary">
 				<ion-label position="floating">Password</ion-label>
 				<ion-input formControlName="password" type="password"></ion-input>
 			</ion-item>
+			<ion-item color="primary" lines="none"></ion-item>
 		</ion-list>
 		
-		<ion-button type="submit" expand="block">Login</ion-button>
+		<ion-button type="submit" color="dark" expand="block">Login</ion-button>
+
+		<div class="details">Don't have an account? <a (click)="setOpen(true)" class="signup-link">sign up</a></div>
 	</form>
 </ion-content>
+
+<ion-modal [isOpen]="isModalOpen">
+	<ng-template>
+		<ion-content [fullscreen]="true" color="primary">
+			<form [formGroup]="signupForm" (ngSubmit)="signUp()" class="login-form">
+				<h1 class="logo">Ruwani</h1>
+				<ion-list>
+					<ion-item color="primary">
+						<ion-label position="floating">Name</ion-label>
+						<ion-input formControlName="name"></ion-input>
+					</ion-item>
+					<ion-item color="primary">
+						<ion-label position="floating">Email</ion-label>
+						<ion-input formControlName="email"></ion-input>
+					</ion-item>
+					<ion-item color="primary">
+						<ion-label position="floating">Password</ion-label>
+						<ion-input formControlName="password" type="password"></ion-input>
+					</ion-item>
+					<ion-item color="primary" lines="none"></ion-item>
+				</ion-list>
+				
+				<ion-button type="submit" color="dark" expand="block">Sign up</ion-button>
+
+				<div (click)="setOpen(false)" class="text-center mt-20"><ion-icon name="arrow-back-outline"></ion-icon> back</div>
+			</form>
+		</ion-content>
+	</ng-template>
+</ion-modal>

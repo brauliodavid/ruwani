@@ -5,3 +5,20 @@
 .task-time {
     font-size: .8rem;
 }
+
+.inline-overview {
+    display: flex;
+}
+
+.inline-overview > div {
+    margin-right: 10px;
+}
+
+.task-title {
+    line-height: 1;
+}
+
+.task-details {
+    font-size: 0.75rem;
+    line-height: 1;
+}

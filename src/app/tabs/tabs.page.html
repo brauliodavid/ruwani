@@ -9,7 +9,7 @@
 				<span *ngIf="activeTab === 'home'" class="active-tab"></span>
 			</ion-tab-button>
 	
-			<ion-tab-button tab="tab2" (click)="activeTab = 'plans'">
+			<ion-tab-button tab="plans" (click)="activeTab = 'plans'">
 				<ion-icon name="copy-outline"></ion-icon>
 				<ion-label>Plans</ion-label>
 				<span *ngIf="activeTab === 'plans'" class="active-tab"></span>
@@ -27,7 +27,7 @@
 				<span *ngIf="activeTab === 'lists'" class="active-tab"></span>
 			</ion-tab-button>
 	
-			<ion-tab-button tab="tab3" (click)="activeTab = 'account'">
+			<ion-tab-button tab="account" (click)="activeTab = 'account'">
 				<ion-icon name="person-outline"></ion-icon>
 				<ion-label>Account</ion-label>
 				<span *ngIf="activeTab === 'account'" class="active-tab"></span>
@@ -38,7 +38,11 @@
 	</ion-tabs>
 </ng-template>
 <ng-template #NotLoad>
-	Loading...
+	<ion-content [fullscreen]="true">
+		<div class="loading-screen">
+			<h2>Ruwani</h2>
+		</div>
+	</ion-content>
 </ng-template>
 
 

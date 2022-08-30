@@ -6,6 +6,14 @@
     margin: 20px 0;
 }
 
+.top-calendar::-webkit-scrollbar {
+    display: none !important;
+}
+
+.top-calendar::-webkit-scrollbar-thumb {
+    display: none !important;
+}
+
 .top-calendar-box {
     width: calc(100% / 3);
     text-align: center;

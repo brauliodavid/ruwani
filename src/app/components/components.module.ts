@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { AddTaskComponent } from './add-task/add-task.component';
 import { TasksComponent } from './tasks/tasks.component';
+import { NgCanvasPainterModule } from 'ng-canvas-painter';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { TasksComponent } from './tasks/tasks.component';
     IonicModule,
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgCanvasPainterModule
   ],
   exports: [
     AddTaskComponent, 

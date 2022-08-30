@@ -7,6 +7,7 @@ import { FirestoreService } from '../services/firestore.service';
 import { User } from '../interfaces/User';
 import { UserService } from '../services/user.service';
 import { TaskService } from '../services/task.service';
+import { ComponentsService } from '../services/components.service';
 
 @Component({
   selector: 'app-tabs',
@@ -26,7 +27,8 @@ export class TabsPage implements OnInit, OnDestroy {
 		private route: ActivatedRoute,
 		private firestoreService: FirestoreService,
 		public userService: UserService,
-		public taskService: TaskService
+		public taskService: TaskService,
+		private componentsService: ComponentsService
 	) {}
 
 	ngOnInit(): void {
@@ -36,6 +38,7 @@ export class TabsPage implements OnInit, OnDestroy {
 
 		this.authenticated = this.auth.authState.pipe(
 			switchMap(async auth => {
+				const loading = await this.componentsService.showLoading()
 				if (auth != null) {
 					const userDoc = this.firestoreService.firestore().collection('users').doc(auth.uid)
 					const userRef = await userDoc.ref.get()
@@ -47,10 +50,12 @@ export class TabsPage implements OnInit, OnDestroy {
 						name: user.name,
 						email: user.email
 					}
-					this.router.navigate(['/tabs/home'])
+					await loading.dismiss()
+					// this.router.navigate(['/tabs/home'])
 					console.log('authenticated!')
 					return true
 				}
+				await loading.dismiss()
 				this.router.navigate(['/login'])
 				return false
 			}),
@@ -59,6 +64,7 @@ export class TabsPage implements OnInit, OnDestroy {
 
 	setOpen(isOpen: boolean) {
 		this.taskService.isTaskOpen.next(isOpen)
+		this.taskService.taskData.next(null)
 	}
 
 	ngOnDestroy(): void {

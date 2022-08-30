@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChildren, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewContainerRef } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { Moment } from 'moment';
 import * as _moment from 'moment-timezone';
@@ -10,6 +10,7 @@ import { AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Task } from '../interfaces/Task';
 import { TaskService } from '../services/task.service';
 import { IonItemSliding } from '@ionic/angular';
+import { reverse } from 'lodash'
 const moment = _moment
 
 @Component({
@@ -22,10 +23,13 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
 	dates = []
 	activeDate = new BehaviorSubject<Moment>(moment())
 
+	today = moment()
+
 	tasksCollection: AngularFirestoreCollection
 	tasks: Task[] = []
 
 	@ViewChildren(IonItemSliding, {read: ViewContainerRef}) tasksItemsRef: QueryList<ViewContainerRef>
+	@ViewChild('calendarBox', {read: ViewContainerRef}) calendarContainerRef: ViewContainerRef;
 
 	private unsubscribe = new Subject<void>()
 
@@ -48,11 +52,16 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
 				// console.log(root)
 			})
 		})
+
+		setTimeout(() => {
+			this.calendarContainerRef.element.nativeElement.scrollLeft += 1900;
+		}, 100)
+		
 	}
 
 	loadDates(){
-		this.dates = new Array(7).fill(0).map((d, i) => {
-			const date = moment().subtract(i, 'days')
+		this.dates = new Array(50).fill(0).map((d, i) => {
+			const date = moment().add(i, 'days')
 			const active = date.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')
 			if(active){
 				this.activeDate.next(date)
@@ -62,13 +71,27 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
 				active
 			}
 		})
+
+		// prev dates
+		this.dates = [...reverse(new Array(50).fill(0).map((d, i) => {
+			const date = moment().subtract(i+1, 'days')
+			return {
+				date,
+				active: false
+			}
+		})), ...this.dates]
 	}
 
 	loadTasks(){
 		this.activeDate.pipe(
 			switchMap(date => {
 				const parentDoc = this.userService.userDoc.collection('tasks').doc(date.format('YYYY-MM-DD'))
-				return this.firestoreService.getCollection({collection: 'data', parent: parentDoc, orderBy: 'date', order: 'asc'})
+				return this.firestoreService.getCollection({
+					collection: 'data', 
+					parent: parentDoc, 
+					orderBy: 'date', 
+					order: 'asc'
+				})
 			}),
 			map(res => {
 				this.tasksCollection = res.collection()

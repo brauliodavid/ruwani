@@ -19,9 +19,11 @@ export interface Task {
         intervalType: string
     }
     list: {
+        type: string
         id: string
         name: string
     }
+    attachments: any[]
 }
 
 export const TASK_MOCK: Task = {
@@ -40,5 +42,10 @@ export const TASK_MOCK: Task = {
     date: null,
     hasTime: false, // if must show time
     repeat: null,
-    list: null,
+    list: {
+        type: null,
+        name: null,
+        id: null
+    },
+    attachments: []
 }
