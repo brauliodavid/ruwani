@@ -1,4 +1,5 @@
 <ion-list>
+	<ion-text *ngIf="!tasks.length" color="medium">No tasks for selected date</ion-text>
 	<ion-item-sliding #taskSliding *ngFor="let task of tasks">
 		<ion-item lines="none">
 			<ion-checkbox color="dark" [checked]="task.checked" (ionChange)="taskChanged($event, task)"></ion-checkbox>
