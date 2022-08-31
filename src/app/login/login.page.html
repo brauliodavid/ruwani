@@ -15,7 +15,10 @@
 			<ion-item color="primary" lines="none"></ion-item>
 		</ion-list>
 		
-		<ion-button type="submit" color="dark" expand="block">Login</ion-button>
+		<ion-button type="submit" color="dark" expand="block">
+			<ion-text *ngIf="!logging">Login</ion-text>
+			<ion-spinner *ngIf="logging" name="crescent"></ion-spinner>
+		</ion-button>
 
 		<div class="details">Don't have an account? <a (click)="setOpen(true)" class="signup-link">sign up</a></div>
 	</form>
