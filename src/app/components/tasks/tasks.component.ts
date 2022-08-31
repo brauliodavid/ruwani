@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { IonItemSliding } from '@ionic/angular';
+import { UserService } from 'src/app/services/user.service';
 import { Task } from '../../interfaces/Task';
 import { FunctionsService } from '../../services/functions.service';
 import { TaskService } from '../../services/task.service';
@@ -17,7 +18,8 @@ export class TasksComponent implements OnInit {
 
 	constructor(
 		private taskService: TaskService,
-		public functions: FunctionsService
+		public functions: FunctionsService,
+		private userService: UserService
 	) { }
 
 	ngOnInit() {}
@@ -34,6 +36,9 @@ export class TasksComponent implements OnInit {
 
 	deleteTask(task: Task, taskSliding: IonItemSliding){
 		this.tasksCollection.doc(task.id).delete()
+		if(task.list.id){
+			this.userService.userDoc.collection(task.list.type).doc(task.list.id).collection('tasks').doc(task.id).delete()
+		}
 		taskSliding.close()
 	}
 

@@ -19,6 +19,8 @@ export class LoginPage implements OnInit {
 
 	isModalOpen: boolean = false
 
+	logging: boolean = false
+
 	constructor(
 		public auth: AngularFireAuth,
 		private router: Router,
@@ -49,13 +51,16 @@ export class LoginPage implements OnInit {
 	}
 
 	login() {
-		// this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+		this.logging = true
 		this.auth.signInWithEmailAndPassword(this.loginForm.value.email, this.loginForm.value.password)
 		.then(res => {
 			this.router.navigate(['/tabs/home'])
+			this.logging = false
 			console.log('Successfully signed in!')
 		})
 		.catch(err => {
+			this.logging = false
+			this.componentsService.openToast('Incorrect credentials', {color: 'danger'})
 			console.log('Something is wrong:', err.message)
 		})
 	}
@@ -67,6 +72,8 @@ export class LoginPage implements OnInit {
 	onSubmit(){
 		if(this.loginForm.valid){
 			this.login()
+		}else{
+			this.componentsService.openToast('All fields are required', {color: 'danger'})
 		}
 	}
 
@@ -83,14 +90,14 @@ export class LoginPage implements OnInit {
 				// Signed in 
 				const user = userCredential.user
 				return this.auth.signInWithEmailAndPassword(email, password)
-				.then(res => {
+				.then(async res => {
 					this.setOpen(false)
-					setTimeout(async () => {
-						await this.firestoreService.firestore().collection('users').doc(user.uid).set({name, email, password})
+					await this.firestoreService.firestore().collection('users').doc(user.uid).set({name, email})
+					setTimeout(() => {
 						loading.dismiss()
 						this.componentsService.openToast('Account created!')
 						this.router.navigate(['/tabs/home'])
-					}, 3000)
+					}, 5000)
 				})
 			})
 			.catch((error) => {
