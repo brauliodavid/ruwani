@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Initialize mandatory git config
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+      - name: Install Ionic CLI
         run: npm install -g @ionic/cli
       - run: ionic build
       - uses: FirebaseExtended/action-hosting-deploy@v0
